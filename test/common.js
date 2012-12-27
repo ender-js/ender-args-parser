@@ -55,3 +55,7 @@ buster.assertions.add('contains', {
   , assertMessage: 'expected ${0} to contain ${1}'
   , refuteMessage: 'expected ${0} to not contain ${1}'
 })
+
+global.buildargs = function (s) {
+  return [ 'node', '/some/path/to/bin' ].concat(s.split(' '))
+}

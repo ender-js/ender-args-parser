@@ -1,49 +1,71 @@
-#Ender 1.0 - work in progress - developer notes
+# Ender Args Parser [![Build Status](https://secure.travis-ci.org/ender-js/ender-args-parser.png)](http://travis-ci.org/ender-js/ender-args-parser)
 
-Architecture notes can be found in *lib/README.md*.
+A component of the [Ender CLI](https://github.com/ender-js/Ender/).
 
-This branch won't be deployed to npm until it's ready for a 1.0 release. Use `npm link` to install your local repo as the global *ender* package.
+Parse command line arguments in a posix(ish) way. Unfortunately, due to historical reasons, Ender doesn't use pure posix-style command line arguments so a custom parser is required. This may change in the future as we evolve the parser and deprecate old arguments.
 
-What does *ready* mean? We haven't quite pinned that down yet, but we'll get there!
+At some point we may expose a more configurable interface to make this library more useful but for now everything is hard-wired in the code.
 
-Use `npm install` to install both the dependencies and the devDependencies, otherwise you won't be able to run the executable (in *bin/ender*) or run the tests (using the Makefile).
+## About Ender
 
-Unit tests can be invoked by running a `make` or `make unittests`. Functional tests take longer to run as they check out packages from npm and can be invoked by running a `make functionaltests`. All types of tests can be run with `make alltests`--**this must be done before any pull-request and must all pass**.
+For more information check out [http://ender.jit.su](http://ender.jit.su)
 
-Tests use BusterJS, you can read more about it [here](http://busterjs.org/). Buster has integrated support for Sinon for mocking and stubbing, you can read more about it [here](http://sinonjs.org/). Note that Buster is still in Beta and may occasionally break. Bug @augustl or @cjno about that.
+## API
 
-Feel free to open an issue on GitHub if you would like to discuss something or want support of some kind. Alternatively you can bug [@rvagg](http://twitter.com/rvagg) on Twitter or via [email](mailto:rod@vagg.org).
+### parse(argv)
+`parse()` takes a standard `process.argv` array and returns an *options* object. Two key components of the *options* object are the `'main'` property which is a string pointing to the main command specified on the command line (e.g. `$ ender build ...` where `'main'` is `'build'`) and `'packages'` which is an array of strings listing any non-option-prefixed portions of the argument list (e.g. `$ ender build --output foo bar baz` where `'packages'` is `[ 'bar', 'baz' ]` because `'foo'` belongs to the `--output` option).
 
-## Some behavioural differences from 0.8.x
+A relatively complete options object created from a command line string could look like this (taken from the unit tests):
 
-This branch should do everything that the current 0.8.x branch does, with some additions:
+```sh
+$ ender build fee fie foe fum --output foobar --use yeehaw --max 10 \
+  --sandbox foo bar --noop --silent --help --sans --debug --externs what tha \
+  --client-lib BOOM --quiet --force-install --minifier none
+```
+→
 
- * Some of the output to stdout will be different. Mostly minor wording changes but also the `ender info` output is included in each *build*, *add* and *remove*.
- * Packages are properly ordered (*!!*). Your *ender.js* will contain the packages you requested *in the order you requested them* on the commandline, with any dependencies placed *before* they are required.
- * *bin/ender* now gives proper exit-codes, if there is any kind of error you'll get a `1`, otherwise a `0`.
- * The `"ender"` key in *package.json* supports an array of files to concatenate to form the bridge.
- * A new `--client-lib` argument can be used to specify an alternative to the default *ender-js* package as a client lib. At the moment a client lib still needs to conform to the basics of the `$` + CommonJS pattern in order to support existing Ender packages.
+```json
+{
+    "main"          : "build"
+  , "packages"      : [ "fee", "fie", "foe", "fum" ]
+  , "output"        : "foobar"
+  , "use"           : "yeehaw"
+  , "max"           : 10
+  , "sandbox"       : [ "foo", "bar" ]
+  , "noop"          : true
+  , "silent"        : true
+  , "help"          : true
+  , "sans"          : true
+  , "debug"         : true
+  , "externs"       : [ "what", "tha" ]
+  , "client-lib"    : "BOOM"
+  , "quiet"         : true
+  , "force-install" : true
+  , "minifier"      : "none"
+}
+```
 
-------------
+### parseClean(argv)
+`parseClean()` is exactly the same as `parse()` but takes a list of arguments without the first 2 that are present on `process.argv`.
 
-#ENDER [![Build Status](https://secure.travis-ci.org/ender-js/Ender.png)](http://travis-ci.org/ender-js/Ender)
+### extend(originalArgs, newArgs)
+`extend()` will take an *options* object and intelligently combine it with a new *options* object. This is used for Ender commands such as `add` and `remove` which take an existing file (where the command line is saved in the header) and alter the original command line options to create a new set of options.
 
-**Ender is a full featured package manager for your browser.**<br/>
-It allows you to search, install, manage, and compile front-end javascript packages and their dependencies for the web. We like to think of it as [NPM](https://github.com/isaacs/npm)'s little sister.
+### toContextString(options)
+`toContextString()` is the reverse of `parse()` in that it can take an *options* object and turn it back into a command line string. Mainly used for attaching command line options to the header of an Ender build file.
 
-**Ender is not a JavaScript library**.<br/>
-It's not a jQuery replacement. It's not even a static asset. It's a tool for making the consumption of front-end javascript packages dead simple and incredibly powerful.
+Even if short-hand command line options were used (e.g. `-o`), `toContextString()` will use the long-hand versions (e.g. `--output`).
 
-![Ender](http://f.cl.ly/items/1W0P3I3D3m3U0e1j2h1c/Screen%20shot%202011-05-09%20at%2011.31.42%20AM.png)
+-------------------------
 
-## WHY?
+## Contributing
 
-In the browser - **small, loosely coupled modules are the future and large, tightly-bound monolithic libraries are the past!**
+Contributions are more than welcome! Just fork and submit a GitHub pull request! If you have changes that need to be synchronized across the various Ender CLI repositories then please make that clear in your pull requests.
 
-Ender capitalizes on this by offering a unique way to bring together the exciting work happening in javascript packages and allows you to mix, match, and customize your own build, suited to your individual needs, without all the extra cruft that comes with larger libraries.
+### Tests
 
-With Ender, if one library goes bad or unmaintained, it can be replaced with another. Need a specific package version? No problem! Does your package have dependencies? Let us handle that for you too!
+Ender Args Parser uses [Buster](http://busterjs.org) for unit testing. You'll get it (and a bazillion unnecessary dependencies) when you `npm install` in your cloned local repository. Simply run `npm test` to run the test suite.
 
-## MORE INFO
+## Licence
 
-For more information checkout [http://ender.no.de](http://ender.no.de)
+*Ender Args Parser* is Copyright (c) 2012 [@rvagg](https://github.com/rvagg), [@ded](https://github.com/ded), [@fat](https://github.com/fat) and other contributors. It is licenced under the MIT licence. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.

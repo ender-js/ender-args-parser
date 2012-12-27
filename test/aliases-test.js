@@ -1,3 +1,5 @@
+/*global buildargs:true*/
+
 /*!
  * ENDER - The open module JavaScript framework
  *
@@ -23,15 +25,32 @@
  */
 
 
-var extend       = require('../util').extend
-  , BuildOutput  = require('./main-build-output')
+var buster = require('buster')
+  , assert = buster.assert
+  , argsParse = require('../')
 
-  , RemoveOutput = extend(BuildOutput, { // inherit from BuildOutput
+buster.testCase('aliases', {
+    'test set = add': function () {
+      var actual = argsParse.parse(buildargs('set'))
+      assert.isString(actual.main)
+      assert.equals(actual.main, 'add')
+    }
 
-        create: function (out, debug, quiet) {
-          return Object.create(this).init(out, debug, quiet)
-        }
+  , 'test rm = remove': function () {
+      var actual = argsParse.parse(buildargs('rm'))
+      assert.isString(actual.main)
+      assert.equals(actual.main, 'remove')
+    }
 
-    })
+  , 'test ls = info': function () {
+      var actual = argsParse.parse(buildargs('ls'))
+      assert.isString(actual.main)
+      assert.equals(actual.main, 'info')
+    }
 
-module.exports = RemoveOutput
+  , 'test list = info': function () {
+      var actual = argsParse.parse(buildargs('list'))
+      assert.isString(actual.main)
+      assert.equals(actual.main, 'info')
+    }
+})
