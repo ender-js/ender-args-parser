@@ -1,5 +1,3 @@
-/*global buildargs:true*/
-
 /*!
  * ENDER - The open module JavaScript framework
  *
@@ -25,9 +23,12 @@
  */
 
 
-var buster = require('buster')
-  , assert = buster.assert
+var buster    = require('bustermove')
+  , assert    = require('referee').assert
+  , refute    = require('referee').refute
   , argsParse = require('../')
+
+require('./common')
 
 buster.testCase('extend', {
     'test no specials': function () {

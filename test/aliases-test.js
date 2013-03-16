@@ -25,9 +25,12 @@
  */
 
 
-var buster = require('buster')
-  , assert = buster.assert
+var buster    = require('bustermove')
+  , assert    = require('referee').assert
+  , refute    = require('referee').refute
   , argsParse = require('../')
+
+require('./common')
 
 buster.testCase('aliases', {
     'test set = add': function () {

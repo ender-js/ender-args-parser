@@ -14,10 +14,12 @@
         "errno"       : "~0.0.3"
     }
   , "devDependencies": {
-        "buster"      : "~0.6.12"
+        "bustermove"  : "*"
+      , "referee"     : "*"
+      , "tap"         : "*"
     }
   , "scripts": {
-        "test"        : "./node_modules/.bin/buster-test"
+        "test"        : "tap test/*-test.js"
     }
   , "repository": {
         "type"        : "git"
