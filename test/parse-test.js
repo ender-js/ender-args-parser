@@ -110,7 +110,7 @@ buster.testCase('parse', {
 
   , 'test parse returns expected object (-- long form)': function () {
       var actual = argsParse.parse(buildargs(
-            'build fee fie foe fum --output foobar --use yeehaw --max 10 --sandbox foo bar --noop --silent --help --sans --debug --externs what tha --client-lib BOOM --quiet --force-install --minifier none'
+            'build fee fie foe fum --output foobar --use yeehaw --max 10 --sandbox foo bar --noop --silent --help --sans --debug --externs what tha --client-lib BOOM --module-lib BAM --quiet --force-install --minifier none'
           ))
       assert.equals(
           actual
@@ -128,6 +128,7 @@ buster.testCase('parse', {
             , debug           : true
             , externs         : [ 'what', 'tha' ]
             , 'client-lib'    : 'BOOM'
+            , 'module-lib'    : 'BAM'
             , quiet           : true
             , 'force-install' : true
             , 'minifier'      : 'none'
