@@ -39,42 +39,39 @@ buster.testCase('toContextString', {
     }
 
   , 'test "-" short form': function () {
-      var ctx = argsParse.toContextString(argsParse.parse(buildargs('build fee fie foe fum -o foobar -u yeehaw -x -s -h')))
+      var ctx = argsParse.toContextString(argsParse.parse(buildargs('build fee fie foe fum -o foobar -u yeehaw -s -h')))
       assert(ctx)
-      assert.equals(ctx.split(' ').length, 12)
+      assert.equals(ctx.split(' ').length, 11)
       ctx += ' ' // for convenience so we can match spaces around each element, even at the end
       assert.match(ctx, /^build fee fie foe fum /)
       assert.match(ctx, / --output foobar /)
       assert.match(ctx, / --use yeehaw /)
-      assert.match(ctx, / --noop /)
       assert.match(ctx, / --silent /)
       assert.match(ctx, / --help /)
     }
 
   , 'test array arg stops at next "-/--"': function () {
       // this test doesn't really need to be here but we may as well confirm
-      var ctx = argsParse.toContextString(argsParse.parse(buildargs('build fee fie --sandbox foo bar --noop foe fum')))
-      assert.equals(ctx, 'build fee fie foe fum --sandbox foo bar --noop')
+      var ctx = argsParse.toContextString(argsParse.parse(buildargs('build fee fie --sandbox foo bar --output foobar foe fum')))
+      assert.equals(ctx, 'build fee fie foe fum --sandbox foo bar --output foobar')
     }
 
   , 'test "--" long form': function () {
       var ctx = argsParse.toContextString(
             argsParse.parse(
               buildargs(
-                'build fee fie foe fum --output foobar --use yeehaw --max 10 --sandbox foo bar --noop --silent --help --sans --debug --externs what tha --client-lib BOOM --quiet --force-install'
+                'build fee fie foe fum --output foobar --use yeehaw --max 10 --sandbox foo bar --silent --help --debug --externs what tha --client-lib BOOM --quiet --force-install'
               )))
       assert(ctx)
-      assert.equals(ctx.split(' ').length, 26)
+      assert.equals(ctx.split(' ').length, 24)
       ctx += ' ' // for convenience so we can match spaces around each element, even at the end
       assert.match(ctx, /^build fee fie foe fum /)
       assert.match(ctx, / --output foobar /)
       assert.match(ctx, / --use yeehaw /)
       assert.match(ctx, / --max 10 /)
       assert.match(ctx, / --sandbox foo bar /)
-      assert.match(ctx, / --noop /)
       assert.match(ctx, / --silent /)
       assert.match(ctx, / --help /)
-      assert.match(ctx, / --sans /)
       assert.match(ctx, / --debug /)
       assert.match(ctx, / --externs what tha /)
       assert.match(ctx, / --client-lib BOOM /)

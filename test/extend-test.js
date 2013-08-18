@@ -61,7 +61,6 @@ buster.testCase('extend', {
               main: 'add'
             , packages: [ 'baz', 'bing' ]
             , sandbox: [ 'bar', 'baz' ]
-            , noop: true
             , silent: true
           }
         , expectedArgs = {
@@ -71,7 +70,6 @@ buster.testCase('extend', {
             , use: 'yeehaw'
             , silent: true
             , help: true
-            , noop: true
           }
 
       assert.equals(argsParse.extend(originalArgs, newArgs), expectedArgs)

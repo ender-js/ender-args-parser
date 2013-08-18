@@ -19,7 +19,7 @@ A relatively complete options object created from a command line string could lo
 
 ```sh
 $ ender build fee fie foe fum --output foobar --use yeehaw --max 10 \
-  --sandbox foo bar --noop --silent --help --sans --debug --externs what tha \
+  --sandbox foo bar --silent --help --debug --externs what tha \
   --client-lib BOOM --quiet --force-install --minifier none
 ```
 →
@@ -32,10 +32,8 @@ $ ender build fee fie foe fum --output foobar --use yeehaw --max 10 \
   , "use"           : "yeehaw"
   , "max"           : 10
   , "sandbox"       : [ "foo", "bar" ]
-  , "noop"          : true
   , "silent"        : true
   , "help"          : true
-  , "sans"          : true
   , "debug"         : true
   , "externs"       : [ "what", "tha" ]
   , "client-lib"    : "BOOM"

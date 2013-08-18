@@ -44,13 +44,13 @@ buster.testCase('parse', {
     }
 
   , 'test parse finds main command with trailling cruft': function () {
-      var actual = argsParse.parse(buildargs('build --debug --noop stuff here'))
+      var actual = argsParse.parse(buildargs('build --debug stuff here'))
       assert.isString(actual.main)
       assert.equals(actual.main, 'build')
     }
 
   , 'test parse finds main command with leading and trailling cruft': function () {
-      var actual = argsParse.parse(buildargs('--debug info --sandbox --noop --output stuff here'))
+      var actual = argsParse.parse(buildargs('--debug info --sandbox --output stuff here'))
       assert.isString(actual.main)
       assert.equals(actual.main, 'info')
     }
@@ -65,7 +65,7 @@ buster.testCase('parse', {
 
   , 'test parse throws exception on only dashed (--) arguments arguments': function () {
       assert.exception(function () {
-        argsParse.parse(buildargs('--debug --noop'))
+        argsParse.parse(buildargs('--debug'))
       }, 'UnknownMainError')
     }
 
@@ -75,7 +75,7 @@ buster.testCase('parse', {
       }, 'UnknownMainError')
 
       assert.exception(function () {
-        argsParse.parse(buildargs('--output bar --noop'))
+        argsParse.parse(buildargs('--output bar'))
       }, 'UnknownMainError')
     }
 
@@ -92,7 +92,7 @@ buster.testCase('parse', {
     }
 
   , 'test parse returns packages as empty array if only dashed (--) provided': function () {
-      var actual = argsParse.parse(buildargs('search --noop'))
+      var actual = argsParse.parse(buildargs('search --max'))
       assert.isArray(actual.packages)
       assert.equals(actual.packages.length, 0)
     }
@@ -110,7 +110,7 @@ buster.testCase('parse', {
 
   , 'test parse returns expected object (-- long form)': function () {
       var actual = argsParse.parse(buildargs(
-            'build fee fie foe fum --output foobar --use yeehaw --max 10 --sandbox foo bar --noop --silent --help --sans --debug --externs what tha --client-lib BOOM --module-lib BAM --quiet --force-install --minifier none'
+            'build fee fie foe fum --output foobar --use yeehaw --max 10 --sandbox foo bar --silent --help --debug --externs what tha --client-lib BOOM --module-lib BAM --quiet --force-install --minifier none'
           ))
       assert.equals(
           actual
@@ -121,10 +121,8 @@ buster.testCase('parse', {
             , use             : 'yeehaw'
             , max             : 10
             , sandbox         : [ 'foo', 'bar' ]
-            , noop            : true
             , silent          : true
             , help            : true
-            , sans            : true
             , debug           : true
             , externs         : [ 'what', 'tha' ]
             , 'client-lib'    : 'BOOM'
@@ -137,7 +135,7 @@ buster.testCase('parse', {
     }
 
   , 'test parse returns expected object (- short form)': function () {
-      var actual = argsParse.parse(buildargs('build fee fie foe fum -o foobar -u yeehaw -x -s -h'))
+      var actual = argsParse.parse(buildargs('build fee fie foe fum -o foobar -u yeehaw -s -h'))
       assert.equals(
           actual
         , {
@@ -145,7 +143,6 @@ buster.testCase('parse', {
             , packages  : [ 'fee', 'fie', 'foe', 'fum' ]
             , output    : 'foobar'
             , use       : 'yeehaw'
-            , noop      : true
             , silent    : true
             , help      : true
           }
@@ -153,14 +150,14 @@ buster.testCase('parse', {
     }
 
   , 'test parse returns expected object (array arg stops at next -/--)': function () {
-      var actual = argsParse.parse(buildargs('build fee fie --sandbox foo bar --noop foe fum'))
+      var actual = argsParse.parse(buildargs('build fee fie --sandbox foo bar --output foobar foe fum'))
       assert.equals(
           actual
         , {
               main: 'build'
             , packages: [ 'fee', 'fie', 'foe', 'fum' ]
             , sandbox: [ 'foo', 'bar' ]
-            , noop: true
+            , output: 'foobar'
           }
       )
     }
@@ -168,7 +165,7 @@ buster.testCase('parse', {
   , 'test parse can handle compact args': function () {
       // normally parse knows to split off the first 2 args, "node script.js"
       // but we want it to be able to handle arrays without it
-      var actual = argsParse.parseClean('build fee fie foe fum -o foobar -u yeehaw -x -s -h'.split(' '))
+      var actual = argsParse.parseClean('build fee fie foe fum -o foobar -u yeehaw -s -h'.split(' '))
       assert.equals(
           actual
         , {
@@ -176,7 +173,6 @@ buster.testCase('parse', {
             , packages: [ 'fee', 'fie', 'foe', 'fum' ]
             , output: 'foobar'
             , use: 'yeehaw'
-            , noop: true
             , silent: true
             , help: true
           }
